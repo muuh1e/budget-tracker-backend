@@ -116,8 +116,6 @@ PhotoCart Backend provides:
 
 ---
 
-1.
-
 ---
 
 ## Running Tests
