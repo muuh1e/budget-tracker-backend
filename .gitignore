@@ -12,4 +12,5 @@ staticfiles/
 
 # Docker
 *.log
-.env.*
+# .env.*
+!.env.example
