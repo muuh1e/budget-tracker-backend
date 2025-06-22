@@ -12,7 +12,7 @@ A Django-based REST API backend for the PhotoCart application, handling user aut
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Docker Setup & Usage](#docker-setup--usage)
--  [Exploring the API routes](#exploring-api--routes)
+-  [Exploring the API routes](#exploring-the-api-routes)
 - [Running Tests](#running-tests)
 d
 
