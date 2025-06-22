@@ -14,7 +14,7 @@ A Django-based REST API backend for the PhotoCart application, handling user aut
 - [Docker Setup & Usage](#docker-setup--usage)
 -  [Exploring the API routes](#exploring-the-api-routes)
 - [Running Tests](#running-tests)
-d
+
 
 ---
 
@@ -192,10 +192,3 @@ Drill into each resource (e.g. `categories/`, `transactions/`, `dashboard/`), se
   find . -type f -name "*.pyc" -delete && \
 
 (to delete cache)
-
-  ```
-
-
-
----
-
