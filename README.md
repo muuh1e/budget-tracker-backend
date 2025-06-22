@@ -36,6 +36,7 @@ PhotoCart Backend provides:
 - Celery, celery-beat & Redis
 - PostgreSQL
 - Docker & Docker Compose
+- Swagger
 
 ---
 
