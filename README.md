@@ -119,6 +119,64 @@ PhotoCart Backend provides:
 
 ---
 
+## Exploring the API Routes
+
+Once your backend is up (e.g. at `http://localhost:8000`), you can discover and exercise every endpoint in three ways:
+
+### 1. Swagger UI  
+Visit  
+```
+http://localhost:8000/swagger/
+```
+An interactive, “try-it-out” interface showing all paths, methods, parameters, request/response schemas and examples.
+
+### 2. ReDoc  
+Visit  
+```
+http://localhost:8000/redoc/
+```
+A clean, read-only documentation layout with the same comprehensive schema details.
+
+### 3. DRF’s Browsable API  
+Point your browser at  
+```
+http://localhost:8000/api/
+```
+Drill into each resource (e.g. `categories/`, `transactions/`, `dashboard/`), see available HTTP methods, and exercise them directly from the browser.
+
+---
+
+### Common Endpoints
+
+#### Authentication (`/api/auth/`)  
+- **POST** `register/` → Create a new user  
+- **POST** `token/` → Obtain JWT access & refresh tokens  
+- **POST** `token/refresh/` → Refresh your access token  
+- **POST** `logout/` → Invalidate your tokens
+
+#### Categories (`/api/categories/`)  
+- **GET** `/` → List your categories  
+- **POST** `/` → Create a category  
+- **GET** `/{id}/` → Retrieve a category  
+- **PUT** `/{id}/` or **PATCH** `/{id}/` → Update a category  
+- **DELETE** `/{id}/` → Delete a category  
+
+#### Transactions (`/api/transactions/`)  
+- **GET** `/` → List transactions  
+  - Query params:  
+    - `date=YYYY-MM-DD`  
+    - `type=INCOME|EXPENSE`  
+    - `category_id=<id>`  
+- **POST** `/` → Create a transaction  
+- **GET** `/{id}/` → Retrieve a transaction  
+- **PUT** `/{id}/` or **PATCH** `/{id}/` → Update a transaction  
+- **DELETE** `/{id}/` → Delete a transaction  
+- **GET** `/by-category/` → Aggregate totals & counts per category
+
+#### Dashboard (`/api/dashboard/`)  
+- **GET** `/` → Get a summary of total income, total expenses, and current balance
+
+
 ## Running Tests
 
 - **With Docker**:
