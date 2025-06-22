@@ -1,0 +1,127 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        HOST_UID: ${HOST_UID}
+        HOST_GID: ${HOST_GID}
+    command: python manage.py runserver 0.0.0.0:8000
+    entrypoint: /usr/local/bin/entrypoint.sh
+    volumes:
+      - .:/app:Z
+      - media:/app/media:Z
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - EMAIL_HOST=smtp4dev
+      - EMAIL_PORT=25
+      - EMAIL_USE_TLS=False
+      - EMAIL_USE_SSL=False
+      - DEFAULT_FROM_EMAIL=photocart@example.com
+    depends_on:
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+      smtp4dev:
+        condition: service_started
+    healthcheck:
+      # --- CHANGED HEALTHCHECK URL FROM '/' TO '/admin/' ---
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8000/admin/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    # --- END HEALTHCHECK ---
+
+  db:
+    image: postgres:15
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+
+  smtp4dev:
+    image: rnwood/smtp4dev
+    restart: always
+    ports:
+      - "5000:80"
+      - "2525:25"
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        HOST_UID: ${HOST_UID}
+        HOST_GID: ${HOST_GID}
+    entrypoint: /usr/local/bin/entrypoint.sh
+    command: ["sh", "-c", "cd /app/photocart && celery -A photocart.celery worker --loglevel=info"]
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
+      - EMAIL_HOST=smtp4dev
+      - EMAIL_PORT=25
+      - EMAIL_USE_TLS=False
+      - EMAIL_USE_SSL=False
+      - DEFAULT_FROM_EMAIL=photocart@example.com
+    depends_on:
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+      smtp4dev:
+        condition: service_started
+      web:
+        condition: service_healthy # Wait for web to be healthy (migrations done)
+    env_file:
+      - .env
+    privileged: true # Kept as requested for permission workaround
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        HOST_UID: ${HOST_UID}
+        HOST_GID: ${HOST_GID}
+    entrypoint: /usr/local/bin/entrypoint.sh
+    command: ["sh", "-c", "cd /app/photocart && celery -A photocart.celery beat --loglevel=info"]
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
+      - EMAIL_HOST=smtp4dev
+      - EMAIL_PORT=2525
+      - EMAIL_USE_TLS=False
+      - EMAIL_USE_SSL=False
+      - DEFAULT_FROM_EMAIL=photocart@example.com
+    depends_on:
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+      smtp4dev:
+        condition: service_started
+      web:
+        condition: service_healthy # Wait for web to be healthy (migrations done)
+    env_file:
+      - .env
+    privileged: true # Kept as requested for permission workaround
+
+volumes:
+  postgres_data:
+  media:
+
+
