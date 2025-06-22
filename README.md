@@ -37,7 +37,7 @@ PhotoCart Backend provides:
 - PostgreSQL
 - Docker & Docker Compose
 - Swagger
-
+- Django-filters
 ---
 
 ## Prerequisites
